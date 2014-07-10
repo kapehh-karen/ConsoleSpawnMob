@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="ConsoleSpawnMob">
+    <output-path>$PROJECT_DIR$/out/artifacts/ConsoleSpawnMob</output-path>
+    <root id="archive" name="ConsoleSpawnMob.jar">
+      <element id="module-output" name="ConsoleSpawnmob" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+    </root>
+  </artifact>
+</component>

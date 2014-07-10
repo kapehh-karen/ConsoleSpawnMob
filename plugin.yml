@@ -1,0 +1,8 @@
+name: ConsoleSpawnMob
+main: me.kapehh.ConsoleSpawnMob.ConsoleSpawnMob
+author: kapehh
+version: 1.0.0
+commands:
+    spawnmobx:
+      usage: /<command> [ location <world> <x> <y> <z> / players <patternName> <radius> ] <count> <mob>
+      description:
