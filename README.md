@@ -5,8 +5,8 @@ ConsoleSpawnmob
 
 <b>Команды:</b>
 <ul>
-<li><code>/spawnmobx location world x y z count mob</code> - спаун моба в координатах</li>
-<li><code>/spawnmobx players world radius count mob</code> - спаун моба около игрока</li>
+<li><code>/spawnmobx location world x y z count mob</code> - спаун моба в координатах <code>world x y z</code></li>
+<li><code>/spawnmobx players world radius count mob</code> - спаун моба около игроков в мире <code>world</code></li>
 </ul>
 
 где <code>world</code> - имя мира, <code>x y z</code> - координаты, <code>count</code> - количество мобов,
