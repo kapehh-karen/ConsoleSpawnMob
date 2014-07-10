@@ -15,8 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
 
-    // /<command> [ location <world> <x> <y> <z> / players <patternName> <radius> ] <count> <mob>
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.isOp()) {
@@ -46,7 +44,7 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
                     Double.valueOf(args[4])
             );
             int count = Integer.valueOf(args[5]);
-            EntityType entityType = EntityType.valueOf(args[6]);
+            EntityType entityType = EntityType.valueOf(args[6].toUpperCase());
 
             for (int i = 0; i < count; i++) {
                 world.spawnEntity(location, entityType);
@@ -58,24 +56,27 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
                 return false;
             }
 
-            String matchString = args[1];
+            World world = Bukkit.getWorld(args[1]);
+            if (world == null) {
+                sender.sendMessage("World '" + args[1] + "' not found");
+                return true;
+            }
+
             double radius = Double.valueOf(args[2]);
             int count = Integer.valueOf(args[3]);
-            EntityType entityType = EntityType.valueOf(args[4]);
+            EntityType entityType = EntityType.valueOf(args[4].toUpperCase());
             double step = (2.0 * Math.PI) / count;
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getName().matches(matchString)) {
-                    Location playerLocation = player.getLocation();
-                    for (int i = 0; i < count; i++) {
-                        Location location = new Location(
-                                playerLocation.getWorld(),
-                                playerLocation.getX() + (Math.cos(i * step) * radius),
-                                playerLocation.getY(),
-                                playerLocation.getZ() + (Math.sin(i * step) * radius)
-                        );
-                        player.getLocation().getWorld().spawnEntity(location, entityType);
-                    }
+            for (Player player : world.getPlayers()) {
+                Location playerLocation = player.getLocation();
+                for (int i = 0; i < count; i++) {
+                    Location location = new Location(
+                            world,
+                            playerLocation.getX() + (Math.cos(i * step) * radius),
+                            playerLocation.getY(),
+                            playerLocation.getZ() + (Math.sin(i * step) * radius)
+                    );
+                    world.spawnEntity(location, entityType);
                 }
             }
 
