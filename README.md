@@ -12,4 +12,4 @@ ConsoleSpawnmob
 где <code>world</code> - имя мира, <code>x y z</code> - координаты, <code>count</code> - количество мобов,
 <code>radius</code> - радиус спауна мобов вокруг игрока,
 <code>patternName</code> - регулярное выражение для выборки игроков (для всех игроков будет <code>.*</code>),
-<code>mob</code> - имя сущности в верхнем регистре (например ZOMBIE, полный список взять можно тут - http://jd.bukkit.org/rb/apidocs/org/bukkit/entity/EntityType.html)
+<code>mob</code> - имя сущности (например ZOMBIE, полный список взять можно тут - http://jd.bukkit.org/rb/apidocs/org/bukkit/entity/EntityType.html)
