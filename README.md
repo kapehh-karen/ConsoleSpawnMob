@@ -1,4 +1,4 @@
-ConsoleSpawnmob
+ConsoleSpawnMob
 ===============
 
 Простой плагин для спауна мобов.
