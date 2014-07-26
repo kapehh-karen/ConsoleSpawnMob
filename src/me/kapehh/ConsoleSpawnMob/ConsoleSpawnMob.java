@@ -28,7 +28,7 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
 
         String method = args[0];
         if (method.equalsIgnoreCase("location")) {
-            if (args.length < 7) {
+            if (args.length < 8) {
                 return false;
             }
 
@@ -38,15 +38,23 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
                 return true;
             }
 
-            Location location = new Location(world,
+            Location locationCenter = new Location(world,
                     Double.valueOf(args[2]),
                     Double.valueOf(args[3]),
                     Double.valueOf(args[4])
             );
-            int count = Integer.valueOf(args[5]);
-            EntityType entityType = EntityType.valueOf(args[6].toUpperCase());
+            double radius = Double.valueOf(args[5]);
+            int count = Integer.valueOf(args[6]);
+            EntityType entityType = EntityType.valueOf(args[7].toUpperCase());
+            double step = (2.0 * Math.PI) / count;
 
             for (int i = 0; i < count; i++) {
+                Location location = new Location(
+                    world,
+                    locationCenter.getX() + (Math.cos(i * step) * radius),
+                    locationCenter.getY(),
+                    locationCenter.getZ() + (Math.sin(i * step) * radius)
+                );
                 world.spawnEntity(location, entityType);
             }
 
@@ -71,10 +79,10 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
                 Location playerLocation = player.getLocation();
                 for (int i = 0; i < count; i++) {
                     Location location = new Location(
-                            world,
-                            playerLocation.getX() + (Math.cos(i * step) * radius),
-                            playerLocation.getY(),
-                            playerLocation.getZ() + (Math.sin(i * step) * radius)
+                        world,
+                        playerLocation.getX() + (Math.cos(i * step) * radius),
+                        playerLocation.getY(),
+                        playerLocation.getZ() + (Math.sin(i * step) * radius)
                     );
                     world.spawnEntity(location, entityType);
                 }
