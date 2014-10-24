@@ -2,7 +2,9 @@ package me.kapehh.ConsoleSpawnMob;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +16,36 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Created by Karen on 10.07.2014.
  */
 public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
+
+    private boolean doFixLocation(World world, Location location) {
+        Block block = world.getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        if (block == null) {
+            return false;
+        }
+
+        if (block.getType().equals(Material.AIR)) {
+            // Ищем первый не пустой блок внизу
+            for (int i = 1; i <= 6; i++) {
+                Block blockFirst = world.getBlockAt(location.getBlockX(), location.getBlockY() - i, location.getBlockZ());
+                if (!blockFirst.getType().equals(Material.AIR)) {
+                    location.setY(blockFirst.getY() + 1);
+                    return true;
+                }
+            }
+        } else {
+            // Ищем 2 пустых блока вверху
+            for (int i = 0; i <= 6; i++) {
+                Block blockFirst = world.getBlockAt(location.getBlockX(), location.getBlockY() + i + 1, location.getBlockZ());
+                Block blockSecond = world.getBlockAt(location.getBlockX(), location.getBlockY() + i, location.getBlockZ());
+                if (blockFirst.getType().equals(Material.AIR) && blockSecond.getType().equals(Material.AIR)) {
+                    location.setY(blockSecond.getY());
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -55,7 +87,9 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
                     locationCenter.getY(),
                     locationCenter.getZ() + (Math.sin(i * step) * radius)
                 );
-                world.spawnEntity(location, entityType);
+                if (doFixLocation(world, location)) {
+                    world.spawnEntity(location, entityType);
+                }
             }
 
             return true;
@@ -84,7 +118,9 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
                         playerLocation.getY(),
                         playerLocation.getZ() + (Math.sin(i * step) * radius)
                     );
-                    world.spawnEntity(location, entityType);
+                    if (doFixLocation(world, location)) {
+                        world.spawnEntity(location, entityType);
+                    }
                 }
             }
 
