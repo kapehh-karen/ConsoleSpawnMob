@@ -21,6 +21,7 @@ ConsoleSpawnMob
 
 <b>Конфиг:</b>
 <pre>
+# worldName - название мира, count - лимит сущностей (если 0, то безлимитно доступен спаун командой)
 limit:
-  worldName: count # worldName - название мира, count - лимит сущностей (если 0, то безлимитно доступен спаун командой)
+  worldName: count
 </pre>
