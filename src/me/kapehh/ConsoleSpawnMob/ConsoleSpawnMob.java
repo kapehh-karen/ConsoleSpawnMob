@@ -1,21 +1,61 @@
 package me.kapehh.ConsoleSpawnMob;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import me.kapehh.main.pluginmanager.config.EventPluginConfig;
+import me.kapehh.main.pluginmanager.config.EventType;
+import me.kapehh.main.pluginmanager.config.PluginConfig;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Karen on 10.07.2014.
  */
 public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
+    Map<World, Integer> worldsLimit = new HashMap<World, Integer>();
+    PluginConfig pluginConfig = null;
+
+    @EventPluginConfig(EventType.LOAD)
+    public void onLoadConfig() {
+        FileConfiguration cfg = pluginConfig.getConfig();
+        boolean needSave = false;
+        worldsLimit.clear();
+
+        String strPath;
+        int limit;
+        for (World world : Bukkit.getWorlds()) {
+            strPath = "limit." + world.getName();
+            limit = cfg.getInt(strPath, -1);
+
+            if (limit < 0) {
+                limit = 0; // 0 - no limit
+                cfg.set(strPath, 0);
+                needSave = true;
+            }
+
+            worldsLimit.put(world, limit);
+        }
+
+        if (needSave) {
+            pluginConfig.saveData();
+        }
+
+        getLogger().info("Config loaded!");
+    }
+
+    private boolean isFullWorld(World world) {
+        Integer limit = worldsLimit.get(world);
+        return !(limit == null || limit == 0) && world.getEntities().size() >= limit;
+    }
 
     private boolean doFixLocation(World world, Location location) {
         Block block = world.getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
@@ -70,6 +110,10 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
                 return true;
             }
 
+            if (isFullWorld(world)) {
+                return true;
+            }
+
             Location locationCenter = new Location(world,
                     Double.valueOf(args[2]),
                     Double.valueOf(args[3]),
@@ -104,6 +148,10 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
                 return true;
             }
 
+            if (isFullWorld(world)) {
+                return true;
+            }
+
             double radius = Double.valueOf(args[2]);
             int count = Integer.valueOf(args[3]);
             EntityType entityType = EntityType.valueOf(args[4].toUpperCase());
@@ -125,6 +173,12 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
             }
 
             return true;
+        } else if (method.equalsIgnoreCase("reload")) {
+            pluginConfig.loadData();
+            if (sender instanceof Player) {
+                sender.sendMessage(ChatColor.GREEN + "Config reloaded!");
+            }
+            return true;
         }
 
         return false;
@@ -132,6 +186,24 @@ public class ConsoleSpawnMob extends JavaPlugin implements CommandExecutor {
 
     @Override
     public void onEnable() {
+        if (getServer().getPluginManager().getPlugin("PluginManager") == null) {
+            getLogger().info("PluginManager not found!!!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        pluginConfig = new PluginConfig(this);
+        pluginConfig.addEventClasses(this);
+        pluginConfig.setup();
+        pluginConfig.loadData();
+
         getCommand("spawnmobx").setExecutor(this);
+    }
+
+    @Override
+    public void onDisable() {
+        if (pluginConfig != null) {
+            pluginConfig.saveData();
+        }
     }
 }
