@@ -4,5 +4,8 @@ author: kapehh
 version: 1.0.0
 commands:
     spawnmobx:
-      usage: /<command> [ location <world> <x> <y> <z> / players <world> ] <radius> <count> <mob>
-      description:
+        usage: /<command> [ location <world> <x> <y> <z> / players <world> ] <radius> <count> <mob>
+        description: Spawn mobs
+    entities:
+        usage: /<command> [world]
+        description: Entity's info
