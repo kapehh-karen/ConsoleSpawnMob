@@ -7,6 +7,7 @@ ConsoleSpawnMob
 <ul>
 <li><code>/spawnmobx location world x y z radius count mob</code> - спаун моба в координатах <code>world x y z</code></li>
 <li><code>/spawnmobx players world radius count mob</code> - спаун моба около игроков в мире <code>world</code></li>
+<li><code>/entities <i>[world]</i></code> - информация о всех сущностях в мире <code>world</code> (если аругмент опущен, то информация о всех мирах)</li>
 </ul>
 
 где <code>world</code> - имя мира, <code>x y z</code> - координаты, <code>count</code> - количество мобов,
@@ -21,7 +22,8 @@ ConsoleSpawnMob
 
 <b>Конфиг:</b>
 <pre>
-# worldName - название мира, count - лимит сущностей (если 0, то безлимитно доступен спаун командой)
+# worldName - название мира, count - лимит живых существ не включая игроков
+# (если 0, то безлимитно доступен спаун командой)
 limit:
   worldName: count
 </pre>
