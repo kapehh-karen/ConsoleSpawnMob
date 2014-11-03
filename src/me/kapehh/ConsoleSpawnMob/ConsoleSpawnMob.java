@@ -70,6 +70,7 @@ public class ConsoleSpawnMob extends JavaPlugin {
         spawnCommandExecutor.setPluginConfig(pluginConfig);
 
         getCommand("spawnmobx").setExecutor(spawnCommandExecutor);
+        getCommand("entities").setExecutor(new EntitiesCommandExecutor());
     }
 
     @Override
