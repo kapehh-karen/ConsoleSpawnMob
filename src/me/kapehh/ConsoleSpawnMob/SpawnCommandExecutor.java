@@ -1,5 +1,7 @@
 package me.kapehh.ConsoleSpawnMob;
 
+import me.kapehh.ConsoleSpawnMob.task.SpawnItem;
+import me.kapehh.ConsoleSpawnMob.task.SpawnTask;
 import me.kapehh.main.pluginmanager.config.PluginConfig;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -18,10 +20,15 @@ import java.util.Map;
  * Created by Karen on 03.11.2014.
  */
 public class SpawnCommandExecutor implements CommandExecutor {
-    Map<World, Integer> worldsLimit;
+    Map<World, List<Double>> worldsLimit;
     PluginConfig pluginConfig;
+    SpawnTask spawnTask;
 
-    public void setWorldsLimit(Map<World, Integer> worldsLimit) {
+    public void setSpawnTask(SpawnTask spawnTask) {
+        this.spawnTask = spawnTask;
+    }
+
+    public void setWorldsLimit(Map<World, List<Double>> worldsLimit) {
         this.worldsLimit = worldsLimit;
     }
 
@@ -30,17 +37,23 @@ public class SpawnCommandExecutor implements CommandExecutor {
     }
 
     private boolean isFullWorld(World world) {
-        Integer limit = worldsLimit.get(world);
-        if (limit == null || limit == 0) {
+        List<Double> limit = worldsLimit.get(world);
+        int players_count = world.getPlayers().size();
+        if (limit == null || limit.get(players_count) == 0) {
             return false;
         }
-        int count = 0;
+        double count = 0;
         for (Entity entity : world.getEntities()) {
             if ((entity instanceof LivingEntity) && !(entity instanceof Player)) {
                 count++;
             }
         }
-        return count >= limit;
+        for (SpawnItem item : spawnTask.spawnItemList) {
+            if (item.getLocation().getWorld().equals(world)) {
+                count++;
+            }
+        }
+        return count >= limit.get(players_count);
     }
 
     private boolean doFixLocation(World world, Location location) {
@@ -97,6 +110,7 @@ public class SpawnCommandExecutor implements CommandExecutor {
             }
 
             if (isFullWorld(world)) {
+                sender.sendMessage("World '" + args[1] + "' is full");
                 return true;
             }
 
@@ -118,7 +132,8 @@ public class SpawnCommandExecutor implements CommandExecutor {
                         locationCenter.getZ() + (Math.sin(i * step) * radius)
                 );
                 if (doFixLocation(world, location)) {
-                    world.spawnEntity(location, entityType);
+                    //world.spawnEntity(location, entityType);
+                    spawnTask.spawnItemList.add(new SpawnItem(location, entityType));
                 }
             }
 
@@ -135,6 +150,7 @@ public class SpawnCommandExecutor implements CommandExecutor {
             }
 
             if (isFullWorld(world)) {
+                sender.sendMessage("World '" + args[1] + "' is full");
                 return true;
             }
 
@@ -153,7 +169,8 @@ public class SpawnCommandExecutor implements CommandExecutor {
                             playerLocation.getZ() + (Math.sin(i * step) * radius)
                     );
                     if (doFixLocation(world, location)) {
-                        world.spawnEntity(location, entityType);
+                        //world.spawnEntity(location, entityType);
+                        spawnTask.spawnItemList.add(new SpawnItem(location, entityType));
                     }
                 }
             }

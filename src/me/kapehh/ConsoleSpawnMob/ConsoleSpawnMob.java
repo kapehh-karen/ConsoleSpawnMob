@@ -1,5 +1,6 @@
 package me.kapehh.ConsoleSpawnMob;
 
+import me.kapehh.ConsoleSpawnMob.task.SpawnTask;
 import me.kapehh.main.pluginmanager.config.EventPluginConfig;
 import me.kapehh.main.pluginmanager.config.EventType;
 import me.kapehh.main.pluginmanager.config.PluginConfig;
@@ -14,17 +15,36 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Karen on 10.07.2014.
  */
 public class ConsoleSpawnMob extends JavaPlugin {
+    SpawnTask spawnTask = null;
     SpawnCommandExecutor spawnCommandExecutor = new SpawnCommandExecutor();
-
-    Map<World, Integer> worldsLimit = new HashMap<World, Integer>();
+    Map<World, List<Double>> worldsLimit = new HashMap<World, List<Double>>();
     PluginConfig pluginConfig = null;
+
+    ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+    private List<Double> evalString(String eval, int max) throws ScriptException {
+        List<Double> doubles = new ArrayList<Double>();
+        for (int i = 0; i <= max; i++) {
+            scriptEngine.put("players", i);
+            Object ret = scriptEngine.eval(eval);
+            if (ret instanceof Double)
+                doubles.add((Double) ret);
+            else if (ret instanceof Integer)
+                doubles.add((double) (Integer) ret);
+        }
+        return doubles;
+    }
 
     @EventPluginConfig(EventType.LOAD)
     public void onLoadConfig() {
@@ -32,14 +52,20 @@ public class ConsoleSpawnMob extends JavaPlugin {
         boolean needSave = false;
         worldsLimit.clear();
 
-        String strPath;
-        int limit;
+        String strPath, strEval;
+        int max_players = cfg.getInt("limit_max_players", 100);
+        List<Double> limit = null;
         for (World world : Bukkit.getWorlds()) {
             strPath = "limit." + world.getName();
-            limit = cfg.getInt(strPath, -1);
+            strEval = cfg.getString(strPath, null);
+            try {
+                if (strEval != null) limit = evalString(strEval, max_players);
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            }
 
-            if (limit < 0) {
-                limit = 0; // 0 - no limit
+            if (strEval == null) {
+                limit = null; // null or 0 - no limit
                 cfg.set(strPath, 0);
                 needSave = true;
             }
@@ -51,6 +77,11 @@ public class ConsoleSpawnMob extends JavaPlugin {
             pluginConfig.saveData();
         }
 
+        if (spawnTask != null) spawnTask.stop();
+        spawnTask = new SpawnTask();
+        spawnTask.runTaskTimer(this, 0, cfg.getInt("tick_interval", 1));
+
+        spawnCommandExecutor.setSpawnTask(spawnTask);
         spawnCommandExecutor.setWorldsLimit(worldsLimit);
         getLogger().info("Config loaded!");
     }
@@ -75,8 +106,6 @@ public class ConsoleSpawnMob extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        /*if (pluginConfig != null) {
-            pluginConfig.saveData();
-        }*/
+        if (spawnTask != null) spawnTask.stop();
     }
 }
