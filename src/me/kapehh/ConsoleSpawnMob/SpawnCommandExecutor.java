@@ -110,7 +110,6 @@ public class SpawnCommandExecutor implements CommandExecutor {
             }
 
             if (isFullWorld(world)) {
-                sender.sendMessage("World '" + args[1] + "' is full");
                 return true;
             }
 
@@ -132,7 +131,6 @@ public class SpawnCommandExecutor implements CommandExecutor {
                         locationCenter.getZ() + (Math.sin(i * step) * radius)
                 );
                 if (doFixLocation(world, location)) {
-                    //world.spawnEntity(location, entityType);
                     spawnTask.spawnItemList.add(new SpawnItem(location, entityType));
                 }
             }
@@ -150,7 +148,6 @@ public class SpawnCommandExecutor implements CommandExecutor {
             }
 
             if (isFullWorld(world)) {
-                sender.sendMessage("World '" + args[1] + "' is full");
                 return true;
             }
 
@@ -169,7 +166,6 @@ public class SpawnCommandExecutor implements CommandExecutor {
                             playerLocation.getZ() + (Math.sin(i * step) * radius)
                     );
                     if (doFixLocation(world, location)) {
-                        //world.spawnEntity(location, entityType);
                         spawnTask.spawnItemList.add(new SpawnItem(location, entityType));
                     }
                 }
