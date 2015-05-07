@@ -27,6 +27,9 @@ import java.util.Map;
  * Created by Karen on 10.07.2014.
  */
 public class ConsoleSpawnMob extends JavaPlugin {
+    public static final String CONSOLE_SPAWNMOB_TAG = "__ConsoleSpawnMob";
+    public static ConsoleSpawnMob instance;
+
     SpawnTask spawnTask = null;
     SpawnCommandExecutor spawnCommandExecutor = new SpawnCommandExecutor();
     Map<World, List<Double>> worldsLimit = new HashMap<World, List<Double>>();
@@ -94,6 +97,8 @@ public class ConsoleSpawnMob extends JavaPlugin {
             return;
         }
 
+        instance = this;
+
         pluginConfig = new PluginConfig(this);
         pluginConfig.addEventClasses(this);
         pluginConfig.setup();
@@ -102,10 +107,13 @@ public class ConsoleSpawnMob extends JavaPlugin {
 
         getCommand("spawnmobx").setExecutor(spawnCommandExecutor);
         getCommand("entities").setExecutor(new EntitiesCommandExecutor());
+        getServer().getPluginManager().registerEvents(new EntityListener(), this);
     }
 
     @Override
     public void onDisable() {
         if (spawnTask != null) spawnTask.stop();
+
+        instance = null;
     }
 }
