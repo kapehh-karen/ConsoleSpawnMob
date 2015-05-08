@@ -12,12 +12,12 @@ ConsoleSpawnMob
 
 где <code>world</code> - имя мира, <code>x y z</code> - координаты, <code>count</code> - количество мобов,
 <code>radius</code> - радиус спауна мобов,
-<code>mob</code> - имя сущности (например ZOMBIE, полный список взять можно тут - http://jd.bukkit.org/rb/apidocs/org/bukkit/entity/EntityType.html)
+<code>mob</code> - имя сущности (либо имя в секции конфига <i>mobstype</i>) (например ZOMBIE, полный список взять можно тут - http://jd.bukkit.org/rb/apidocs/org/bukkit/entity/EntityType.html)
 
 <b>Использование:</b>
 <ul>
 <li><code>/spawnmobx players world_the_end 5 10 ENDERMAN</code> - создаст в радиусе 5 блоков от всех игроков в Краю по 10 шт Эндерманов</li>
-<li><code>/spawnmobx location world_nether -18 89 46 5 4 blaze</code> - создаст в Аду по координатам -18,89,46 4шт Blaze (имя сущности можно писать в любом регистре) в радиусе 5 блоков</li>
+<li><code>/spawnmobx location world_nether -18 89 46 5 4 blaze</code> - создаст в Аду по координатам -18,89,46 4шт Blaze (имя сущности, можно писать в любом регистре) в радиусе 5 блоков</li>
 </ul>
 
 <b>Конфиг:</b>
