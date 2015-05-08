@@ -38,6 +38,7 @@ mobstype:
     damage: 12
     health: 100
     equip:
+      weapon: DIAMOND_SWORD
       helmet: LEATHER_HELMET
       chestplate: LEATHER_CHESTPLATE
       leggings: LEATHER_CHESTPLATE
