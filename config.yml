@@ -1,7 +1,4 @@
 limit: []
 limit_max_players: 100
 tick_interval: 1
-mobstype:
-    MyZombie:
-        entity: ZOMBIE
-        name: Hulk
+mobstype: []

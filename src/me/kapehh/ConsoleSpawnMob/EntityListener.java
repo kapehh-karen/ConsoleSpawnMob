@@ -1,5 +1,8 @@
 package me.kapehh.ConsoleSpawnMob;
 
+import me.kapehh.ConsoleSpawnMob.mob.MobInfo;
+import me.kapehh.ConsoleSpawnMob.mob.MobsManager;
+import org.bukkit.Material;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,10 +23,10 @@ public class EntityListener implements Listener {
             Monster monster = (Monster) event.getDamager();
             if (monster.hasMetadata(ConsoleSpawnMob.CONSOLE_SPAWNMOB_TAG)) {
                 List<MetadataValue> values = monster.getMetadata(ConsoleSpawnMob.CONSOLE_SPAWNMOB_TAG);
-                if (values != null && values.size() > 0) event.setDamage(values.get(0).asDouble());
-
-                // TODO: Remove
-                System.out.println("NAIZZZ: hp - " + monster.getHealth());
+                if (values != null && values.size() > 0) {
+                    MobInfo mobInfo = (MobInfo) values.get(0).value();
+                    event.setDamage(mobInfo.getDamage());
+                }
             }
         }
     }

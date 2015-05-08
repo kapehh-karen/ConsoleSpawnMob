@@ -1,5 +1,7 @@
 package me.kapehh.ConsoleSpawnMob;
 
+import me.kapehh.ConsoleSpawnMob.mob.MobInfo;
+import me.kapehh.ConsoleSpawnMob.mob.MobsManager;
 import me.kapehh.ConsoleSpawnMob.task.SpawnItem;
 import me.kapehh.ConsoleSpawnMob.task.SpawnTask;
 import me.kapehh.main.pluginmanager.config.PluginConfig;
@@ -23,6 +25,15 @@ public class SpawnCommandExecutor implements CommandExecutor {
     Map<World, List<Double>> worldsLimit;
     PluginConfig pluginConfig;
     SpawnTask spawnTask;
+    MobsManager mobsManager;
+
+    public MobsManager getMobsManager() {
+        return mobsManager;
+    }
+
+    public void setMobsManager(MobsManager mobsManager) {
+        this.mobsManager = mobsManager;
+    }
 
     public void setSpawnTask(SpawnTask spawnTask) {
         this.spawnTask = spawnTask;
@@ -120,7 +131,12 @@ public class SpawnCommandExecutor implements CommandExecutor {
             );
             double radius = Double.valueOf(args[5]);
             int count = Integer.valueOf(args[6]);
-            EntityType entityType = EntityType.valueOf(args[7].toUpperCase());
+            String mobName = args[7].toUpperCase();
+            EntityType entityType = null;
+            MobInfo mobInfo = mobsManager.getFromName(mobName);
+            if (mobInfo == null) {
+                entityType = EntityType.valueOf(mobName);
+            }
             double step = (2.0 * Math.PI) / count;
 
             for (int i = 0; i < count; i++) {
@@ -131,7 +147,7 @@ public class SpawnCommandExecutor implements CommandExecutor {
                         locationCenter.getZ() + (Math.sin(i * step) * radius)
                 );
                 if (doFixLocation(world, location)) {
-                    spawnTask.spawnItemList.add(new SpawnItem(location, entityType));
+                    spawnTask.spawnItemList.add(new SpawnItem(mobInfo, entityType, location));
                 }
             }
 
@@ -153,7 +169,12 @@ public class SpawnCommandExecutor implements CommandExecutor {
 
             double radius = Double.valueOf(args[2]);
             int count = Integer.valueOf(args[3]);
-            EntityType entityType = EntityType.valueOf(args[4].toUpperCase());
+            String mobName = args[4].toUpperCase();
+            MobInfo mobInfo = mobsManager.getFromName(mobName);
+            EntityType entityType = null;
+            if (mobInfo == null) {
+                entityType = EntityType.valueOf(mobName);
+            }
             double step = (2.0 * Math.PI) / count;
 
             for (Player player : world.getPlayers()) {
@@ -166,7 +187,7 @@ public class SpawnCommandExecutor implements CommandExecutor {
                             playerLocation.getZ() + (Math.sin(i * step) * radius)
                     );
                     if (doFixLocation(world, location)) {
-                        spawnTask.spawnItemList.add(new SpawnItem(location, entityType));
+                        spawnTask.spawnItemList.add(new SpawnItem(mobInfo, entityType, location));
                     }
                 }
             }
