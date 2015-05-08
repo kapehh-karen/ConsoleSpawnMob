@@ -29,6 +29,17 @@ limit:
   world_nether: 0
   world_the_end: 0
   test: 0
-limit_max_players: 100 # максимальное количество игроков на сервере (цифра не ограничивает их, нужна для вычислений
+limit_max_players: 100 # максимальное количество игроков на сервере (цифра не ограничивает их, нужна для вычислений)
 tick_interval: 5 # интервал спауна мобов, лучше ставить 1
+mobstype:
+  MyZombie:
+    entity: ZOMBIE # прототип моба
+    name: Hulk # имя которое будет отображаться над головой
+    damage: 12
+    health: 100
+    equip:
+      helmet: LEATHER_HELMET
+      chestplate: LEATHER_CHESTPLATE
+      leggings: LEATHER_CHESTPLATE
+      boots: LEATHER_BOOTS
 </pre>
